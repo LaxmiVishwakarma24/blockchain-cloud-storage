@@ -1,6 +1,6 @@
 # Blockchain-Backed Cloud Storage Verification
 
-MCA final-year project: Flask, PostgreSQL, S3/MinIO, AES-256-GCM, SHA-256 and Hyperledger Fabric.
+ Flask, PostgreSQL, S3/MinIO, AES-256-GCM, SHA-256 and Hyperledger Fabric.
 
 ## Setup (Windows PowerShell)
 
