@@ -28,7 +28,7 @@ def test_seed_creates_roles_and_permissions(app):
     assert {r.name for r in Role.query.all()} == {"ADMIN", "MANAGER", "USER"}
     assert len(Role.query.filter_by(name="ADMIN").first().permissions) == 7
     user_permissions = {p.name for p in Role.query.filter_by(name="USER").first().permissions}
-    assert user_permissions == {"VIEW", "DOWNLOAD", "UPLOAD", "MODIFY", "DELETE", "VERIFY"}
+    assert user_permissions == {"VIEW", "DOWNLOAD", "UPLOAD", "MODIFY", "DELETE", "SHARE", "VERIFY"}
 
 
 def test_seed_is_idempotent(app):
