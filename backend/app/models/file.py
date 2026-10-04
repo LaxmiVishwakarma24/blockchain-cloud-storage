@@ -45,6 +45,8 @@ class FileVersion(db.Model):
     is_encrypted = db.Column(db.Boolean, nullable=False, default=False, server_default=false())
     created_by_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     blockchain_tx_id = db.Column(db.String(128))
+    last_verified_at = db.Column(db.DateTime(timezone=True))
+    verification_status = db.Column(db.String(16))
     created_at = db.Column(db.DateTime(timezone=True), default=utcnow)
 
     file = db.relationship("File", back_populates="versions")
