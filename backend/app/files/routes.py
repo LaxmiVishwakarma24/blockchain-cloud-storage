@@ -79,6 +79,8 @@ def _file_json(file):
         "size_bytes": version.size_bytes if version else None,
         "sha256": version.sha256 if version else None,
         "encrypted": version.is_encrypted if version else None,
+        "verification": version.verification_status if version else None,
+        "verified_at": version.last_verified_at.isoformat() if version and version.last_verified_at else None,
         "deleted": file.is_deleted,
         "created_at": file.created_at.isoformat() if file.created_at else None,
         "updated_at": file.updated_at.isoformat() if file.updated_at else None,
@@ -92,6 +94,8 @@ def _version_json(version):
         "sha256": version.sha256,
         "size_bytes": version.size_bytes,
         "encrypted": version.is_encrypted,
+        "verification": version.verification_status,
+        "verified_at": version.last_verified_at.isoformat() if version.last_verified_at else None,
         "created_by": version.created_by.username if version.created_by else None,
         "created_at": version.created_at.isoformat() if version.created_at else None,
     }
