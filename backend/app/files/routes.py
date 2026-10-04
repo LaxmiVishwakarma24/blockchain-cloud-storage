@@ -6,7 +6,8 @@ from flask_login import current_user, login_required
 from ..audit.services import record_event
 from ..extensions import db
 from ..models import File
-from ..storage import ObjectNotFound, StorageError, get_storage
+from ..security.encryption import EncryptionConfigError
+from ..storage import ObjectNotFound, StorageError
 from . import files_bp, services
 from .validation import UploadValidationError, validate_upload
 
@@ -49,6 +50,7 @@ def _file_json(file):
         "version": version.version_number if version else None,
         "size_bytes": version.size_bytes if version else None,
         "sha256": version.sha256 if version else None,
+        "encrypted": version.is_encrypted if version else None,
         "created_at": file.created_at.isoformat() if file.created_at else None,
     }
 
@@ -84,6 +86,9 @@ def upload():
 
     try:
         file, _ = services.store_new_file(current_user, checked, data, ip=request.remote_addr)
+    except EncryptionConfigError:
+        current_app.logger.error("Encryption key is missing or invalid")
+        return jsonify(error="Encryption unavailable", message="Encryption is not configured on the server."), 503
     except StorageError:
         current_app.logger.exception("Storage failure during upload")
         return jsonify(error="Storage unavailable", message="The file could not be stored."), 503
@@ -120,9 +125,21 @@ def download(file_id):
     file = _file_or_404(file_id)
     version = file.current_version
     try:
-        data = get_storage().get_object(version.object_key)
+        data = services.read_plaintext(version)
     except ObjectNotFound:
         abort(404)
+    except services.IntegrityFailure:
+        services.report_integrity_failure(current_user, file, version, request.remote_addr)
+        return (
+            jsonify(
+                error="Integrity check failed",
+                message="The stored file failed its integrity check and was not delivered.",
+            ),
+            409,
+        )
+    except EncryptionConfigError:
+        current_app.logger.error("Encryption key is missing or invalid")
+        return jsonify(error="Encryption unavailable", message="Encryption is not configured on the server."), 503
     except StorageError:
         current_app.logger.exception("Storage failure during download")
         return jsonify(error="Storage unavailable", message="The file could not be read."), 503

@@ -45,7 +45,7 @@ def test_upload_requires_login(client):
     assert upload(client).status_code == 401
 
 
-def test_upload_stores_file_hash_and_metadata(client):
+def test_upload_stores_encrypted_file_hash_and_metadata(client):
     user = make_user()
     login(client)
     r = upload(client)
@@ -54,11 +54,15 @@ def test_upload_stores_file_hash_and_metadata(client):
     assert body["sha256"] == sha256_hex(PDF)
     assert body["size_bytes"] == len(PDF)
     assert body["version"] == 1
+    assert body["encrypted"] is True
     version = FileVersion.query.one()
     assert version.sha256 == sha256_hex(PDF)
+    assert version.is_encrypted is True
     assert version.object_key.startswith(f"users/{user.id}/")
     assert "report" not in version.object_key
-    assert get_storage().get_object(version.object_key) == PDF
+    stored = get_storage().get_object(version.object_key)
+    assert stored != PDF
+    assert PDF not in stored
     event = AuditEvent.query.filter_by(action="UPLOAD").one()
     assert event.status == "SUCCESS"
     assert event.file_id == body["id"]
