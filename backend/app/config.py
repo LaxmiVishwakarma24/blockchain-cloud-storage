@@ -1,3 +1,4 @@
+import base64
 import os
 
 from dotenv import load_dotenv
@@ -19,6 +20,9 @@ class Config:
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
     SESSION_COOKIE_SECURE = os.getenv("FLASK_ENV") == "production"
+
+    # Base64 of 32 random bytes. Create one with: flask generate-key
+    ENCRYPTION_KEY = os.getenv("ENCRYPTION_KEY", "")
 
     # Uploads: per-file limit, with a little headroom for multipart overhead.
     MAX_UPLOAD_MB = int(os.getenv("MAX_UPLOAD_MB") or "25")
@@ -48,3 +52,5 @@ class TestConfig(Config):
     STORAGE_PROVIDER = "memory"
     MAX_UPLOAD_MB = 1
     MAX_CONTENT_LENGTH = 2 * 1024 * 1024
+    # Throw-away key used only by the test suite.
+    ENCRYPTION_KEY = base64.b64encode(bytes(range(32))).decode("ascii")
