@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Files{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">My files</h1>
+  <a class="btn btn-primary" href="{{ url_for('files.upload_page') }}">Upload a file</a>
+</div>
+
+<div class="btn-group mb-3" role="group" aria-label="View">
+  <button type="button" class="btn btn-primary" id="tab-active">Files</button>
+  <button type="button" class="btn btn-outline-primary" id="tab-trash">Trash</button>
+</div>
+
+<form id="filters" class="row g-2 mb-3">
+  <div class="col-md-3"><input class="form-control" name="q" placeholder="Search by name" maxlength="100"></div>
+  <div class="col-md-2">
+    <select class="form-select" name="type" aria-label="Type">
+      <option value="">All types</option>
+      <option>pdf</option><option>png</option><option>jpg</option><option>jpeg</option><option>gif</option>
+      <option>txt</option><option>csv</option><option>docx</option><option>xlsx</option><option>pptx</option>
+    </select>
+  </div>
+  <div class="col-md-2"><input class="form-control" type="date" name="from" aria-label="From date"></div>
+  <div class="col-md-2"><input class="form-control" type="date" name="to" aria-label="To date"></div>
+  <div class="col-md-2">
+    <select class="form-select" name="sort" aria-label="Sort by">
+      <option value="created">Uploaded</option><option value="name">Name</option><option value="updated">Updated</option>
+    </select>
+  </div>
+  <div class="col-md-1">
+    <select class="form-select" name="order" aria-label="Order">
+      <option value="desc">Desc</option><option value="asc">Asc</option>
+    </select>
+  </div>
+</form>
+
+<div id="message" role="status"></div>
+<div class="table-responsive">
+  <table class="table table-sm align-middle">
+    <thead><tr><th>Name</th><th>Size</th><th>Uploaded</th><th>Version</th><th>SHA-256</th><th></th></tr></thead>
+    <tbody id="file-rows"></tbody>
+  </table>
+</div>
+<div id="pager" class="d-flex align-items-center"></div>
+<script src="{{ url_for('static', filename='js/files.js') }}"></script>
+{% endblock %}
