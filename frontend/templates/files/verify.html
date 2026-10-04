@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Verify{% endblock %}
+{% block content %}
+<div id="verify-root" data-file-id="{{ file_id }}">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Verify {{ file_name }}</h1>
+    <a class="btn btn-outline-secondary" href="{{ url_for('files.files_page') }}">Back to files</a>
+  </div>
+  <p class="text-muted">
+    This fetches the stored copy, decrypts it, recalculates its SHA-256 and compares it
+    with the fingerprint recorded when the file was uploaded.
+  </p>
+  <div class="d-flex align-items-center gap-2 mb-4">
+    <label class="form-label mb-0" for="version">Version</label>
+    <select class="form-select w-auto" id="version"></select>
+    <button class="btn btn-success" id="verify-button" type="button">Verify now</button>
+  </div>
+  <div id="result" role="status"></div>
+</div>
+<script src="{{ url_for('static', filename='js/verify.js') }}"></script>
+{% endblock %}

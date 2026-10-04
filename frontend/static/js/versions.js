@@ -45,13 +45,18 @@ function row(version, isCurrent) {
   tr.appendChild(cell(version.sha256.slice(0, 16) + "..."));
   tr.appendChild(cell(version.created_by || ""));
   tr.appendChild(cell(version.created_at ? new Date(version.created_at).toLocaleString() : ""));
-  tr.appendChild(cell(version.encrypted ? "yes" : "no"));
+  tr.appendChild(cell((version.encrypted ? "yes" : "no") + (version.verification ? " / " + version.verification.toLowerCase() : "")));
   const actions = document.createElement("td");
   const link = document.createElement("a");
   link.className = "btn btn-sm btn-outline-primary me-1";
   link.href = "/api/files/" + fileId + "/versions/" + version.version + "/download";
   link.textContent = "Download";
   actions.appendChild(link);
+  const verifyLink = document.createElement("a");
+  verifyLink.className = "btn btn-sm btn-outline-success me-1";
+  verifyLink.href = "/files/" + fileId + "/verify?version=" + version.version;
+  verifyLink.textContent = "Verify";
+  actions.appendChild(verifyLink);
   if (!isCurrent) {
     const button = document.createElement("button");
     button.type = "button";

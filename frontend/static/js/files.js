@@ -77,13 +77,19 @@ async function restore(file) {
   else { notify(result.data.message || "Restore failed.", "danger"); }
 }
 
+function statusMark(status) {
+  if (status === "VERIFIED") return " \u2713";
+  if (status === "MISMATCH" || status === "MISSING") return " \u26A0";
+  return "";
+}
+
 function row(file) {
   const tr = document.createElement("tr");
   tr.appendChild(cell(file.name));
   tr.appendChild(cell(formatSize(file.size_bytes || 0)));
   tr.appendChild(cell(file.created_at ? new Date(file.created_at).toLocaleDateString() : ""));
   tr.appendChild(cell("v" + file.version));
-  tr.appendChild(cell(file.sha256 ? file.sha256.slice(0, 12) + "..." : ""));
+  tr.appendChild(cell((file.sha256 ? file.sha256.slice(0, 12) + "..." : "") + statusMark(file.verification)));
   const actions = document.createElement("td");
   if (view === "trash") {
     actions.appendChild(actionButton("Restore", "success", () => restore(file)));
@@ -91,6 +97,7 @@ function row(file) {
     actions.appendChild(actionLink("Download", "/api/files/" + file.id + "/download"));
     actions.appendChild(actionLink("Versions", "/files/" + file.id + "/versions"));
     actions.appendChild(actionLink("Share", "/files/" + file.id + "/share"));
+    actions.appendChild(actionLink("Verify", "/files/" + file.id + "/verify"));
     actions.appendChild(actionButton("Rename", "secondary", () => rename(file)));
     actions.appendChild(actionButton("Delete", "danger", () => remove(file)));
   }
