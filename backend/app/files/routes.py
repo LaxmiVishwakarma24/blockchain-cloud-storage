@@ -47,7 +47,7 @@ def _file_or_404(file_id, permission, include_deleted=False):
     if file is None or (file.is_deleted and not include_deleted):
         abort(404)
     if not access.can(current_user, file, permission):
-        alert_type = "UNAUTHORIZED_DELETE" if permission == "DELETE" else "UNAUTHORIZED_ACCESS"
+        alert_type = access.denial_alert_type(current_user, file, permission)
         db.session.add(
             SecurityAlert(
                 alert_type=alert_type,
