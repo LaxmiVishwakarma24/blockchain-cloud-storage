@@ -45,3 +45,10 @@ def register_cli(app):
             detail = f" ({exc.__cause__})" if exc.__cause__ else ""
             raise click.ClickException(f"{exc}{detail}")
         click.echo(f"Storage ready: provider={storage.provider}, bucket={storage.bucket}")
+
+    @app.cli.command("generate-key")
+    def generate_key_command():
+        """Print a new random AES-256 key for ENCRYPTION_KEY."""
+        from .security.encryption import generate_key
+
+        click.echo(generate_key())
