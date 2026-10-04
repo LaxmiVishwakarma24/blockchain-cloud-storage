@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Upload{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Upload a file</h1>
+<div class="card shadow-sm mb-4"><div class="card-body">
+  <form id="upload-form" data-csrf="{{ csrf_token() }}">
+    <div class="mb-3">
+      <label class="form-label" for="file">File (max {{ max_mb }} MB: pdf, png, jpg, gif, txt, csv, docx, xlsx, pptx)</label>
+      <input class="form-control" type="file" id="file" name="file" required>
+    </div>
+    <button class="btn btn-primary" type="submit">Upload</button>
+  </form>
+  <div id="result" class="mt-3" role="status"></div>
+</div></div>
+<h2 class="h5">Your files</h2>
+<table class="table table-sm">
+  <thead><tr><th>Name</th><th>Size</th><th>SHA-256</th><th></th></tr></thead>
+  <tbody id="file-rows"></tbody>
+</table>
+<script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+{% endblock %}
