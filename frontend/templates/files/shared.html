@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Shared with me{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">Shared with me</h1>
+  <a class="btn btn-outline-secondary" href="{{ url_for('files.files_page') }}">My files</a>
+</div>
+<div id="message" role="status"></div>
+<div class="table-responsive">
+  <table class="table table-sm align-middle">
+    <thead><tr><th>Name</th><th>Owner</th><th>You can</th><th>Expires</th><th></th></tr></thead>
+    <tbody id="shared-rows"></tbody>
+  </table>
+</div>
+<script src="{{ url_for('static', filename='js/shared.js') }}"></script>
+{% endblock %}

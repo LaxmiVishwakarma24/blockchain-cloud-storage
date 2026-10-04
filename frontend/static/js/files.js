@@ -90,6 +90,7 @@ function row(file) {
   } else {
     actions.appendChild(actionLink("Download", "/api/files/" + file.id + "/download"));
     actions.appendChild(actionLink("Versions", "/files/" + file.id + "/versions"));
+    actions.appendChild(actionLink("Share", "/files/" + file.id + "/share"));
     actions.appendChild(actionButton("Rename", "secondary", () => rename(file)));
     actions.appendChild(actionButton("Delete", "danger", () => remove(file)));
   }

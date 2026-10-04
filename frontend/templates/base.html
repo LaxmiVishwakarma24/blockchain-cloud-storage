@@ -16,6 +16,7 @@
       <div class="d-flex align-items-center gap-2 text-light">
         <a class="btn btn-sm btn-outline-light" href="{{ url_for('files.files_page') }}">Files</a>
         <a class="btn btn-sm btn-outline-light" href="{{ url_for('files.upload_page') }}">Upload</a>
+        <a class="btn btn-sm btn-outline-light" href="{{ url_for('files.shared_page') }}">Shared</a>
         <span class="ms-2">{{ current_user.username }} <span class="badge bg-secondary">{{ current_user.role_name }}</span></span>
         <a class="btn btn-sm btn-outline-light" href="{{ url_for('auth.change_password') }}">Change password</a>
         <form method="post" action="{{ url_for('auth.logout') }}" class="m-0">
