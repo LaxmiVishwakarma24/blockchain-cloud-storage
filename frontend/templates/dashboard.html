@@ -6,5 +6,6 @@
 <p>Permissions:
   {% for p in current_user.role.permissions %}<span class="badge bg-primary me-1">{{ p.name }}</span>{% endfor %}
 </p>
-<p class="text-muted">The full dashboard arrives in a later phase.</p>
+<a class="btn btn-primary" href="{{ url_for('files.upload_page') }}">Upload a file</a>
+<p class="text-muted mt-3">The full dashboard arrives in a later phase.</p>
 {% endblock %}

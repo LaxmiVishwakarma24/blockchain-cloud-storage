@@ -45,3 +45,39 @@ def register_cli(app):
             detail = f" ({exc.__cause__})" if exc.__cause__ else ""
             raise click.ClickException(f"{exc}{detail}")
         click.echo(f"Storage ready: provider={storage.provider}, bucket={storage.bucket}")
+
+    @app.cli.command("generate-key")
+    def generate_key_command():
+        """Print a new random AES-256 key for ENCRYPTION_KEY."""
+        from .security.encryption import generate_key
+
+        click.echo(generate_key())
+
+    @app.cli.command("verify-all")
+    def verify_all():
+        """Verify the current version of every active file and print a summary."""
+        from .files import integrity
+        from .models import File
+        from .security.encryption import EncryptionConfigError
+        from .storage import StorageError
+
+        counts = {integrity.VERIFIED: 0, integrity.MISMATCH: 0, integrity.MISSING: 0}
+        skipped = 0
+        for file in File.query.filter_by(is_deleted=False).order_by(File.id).all():
+            version = file.current_version
+            if version is None:
+                continue
+            try:
+                status, _, reason = integrity.check_version(version)
+            except (EncryptionConfigError, StorageError) as exc:
+                skipped += 1
+                click.echo(f"file {file.id}: could not be checked ({type(exc).__name__})")
+                continue
+            integrity.record_verification(None, file, version, status, reason)
+            counts[status] += 1
+            if status != integrity.VERIFIED:
+                click.echo(f"file {file.id} version {version.version_number}: {status} ({reason})")
+        click.echo(
+            f"{counts[integrity.VERIFIED]} verified, {counts[integrity.MISMATCH]} mismatched, "
+            f"{counts[integrity.MISSING]} missing, {skipped} could not be checked."
+        )

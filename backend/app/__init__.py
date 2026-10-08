@@ -41,12 +41,14 @@ def create_app(config_class=Config):
         return redirect(url_for("auth.login", next=request.path))
 
     from .auth import auth_bp
+    from .files import files_bp
     from .health import health_bp
     from .users import users_bp
 
     app.register_blueprint(health_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(users_bp)
+    app.register_blueprint(files_bp)
 
     register_error_handlers(app)
     register_security_headers(app)

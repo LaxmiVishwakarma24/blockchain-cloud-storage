@@ -1,5 +1,7 @@
 from datetime import timezone
 
+from sqlalchemy import false
+
 from ..extensions import db
 from .base import utcnow
 
@@ -37,11 +39,14 @@ class FileVersion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     file_id = db.Column(db.Integer, db.ForeignKey("files.id"), nullable=False, index=True)
     version_number = db.Column(db.Integer, nullable=False)
-    sha256 = db.Column(db.String(64), nullable=False)
-    size_bytes = db.Column(db.BigInteger, nullable=False)
+    sha256 = db.Column(db.String(64), nullable=False)  # hash of the ORIGINAL file
+    size_bytes = db.Column(db.BigInteger, nullable=False)  # size of the original file
     object_key = db.Column(db.String(512), nullable=False, unique=True)
+    is_encrypted = db.Column(db.Boolean, nullable=False, default=False, server_default=false())
     created_by_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     blockchain_tx_id = db.Column(db.String(128))
+    last_verified_at = db.Column(db.DateTime(timezone=True))
+    verification_status = db.Column(db.String(16))
     created_at = db.Column(db.DateTime(timezone=True), default=utcnow)
 
     file = db.relationship("File", back_populates="versions")
